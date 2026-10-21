@@ -1,0 +1,203 @@
+{
+  "version": 1,
+  "protocol": "ascii-line",
+  "line_ending": "\n",
+  "note": "TC377 循迹车调参命令表。下位机解析在 code/vofa.c 的 vofa_exec()，一行一条，参数按顺序填。",
+  "commands": [
+    {
+      "id": "pid_all",
+      "name": "两路电机 PID",
+      "template": "p {kp} {ki} {kd}",
+      "example": "p 2.0 0.5 0",
+      "desc": "同时改电机 1、电机 2 的速度环 PID（会清积分）",
+      "args": [
+        {
+          "name": "kp",
+          "type": "float",
+          "min": 0,
+          "max": 10,
+          "default": 2.0
+        },
+        {
+          "name": "ki",
+          "type": "float",
+          "min": 0,
+          "max": 10,
+          "default": 0.5
+        },
+        {
+          "name": "kd",
+          "type": "float",
+          "min": 0,
+          "max": 5,
+          "default": 0.0
+        }
+      ]
+    },
+    {
+      "id": "kp",
+      "name": "Kp（两路）",
+      "template": "kp {kp}",
+      "example": "kp 2.0",
+      "desc": "只改两路 Kp，Ki/Kd 不变，积分不清零",
+      "args": [
+        {
+          "name": "kp",
+          "type": "float",
+          "min": 0,
+          "max": 10,
+          "default": 2.0
+        }
+      ]
+    },
+    {
+      "id": "ki",
+      "name": "Ki（两路）",
+      "template": "ki {ki}",
+      "example": "ki 0.5",
+      "desc": "只改两路 Ki",
+      "args": [
+        {
+          "name": "ki",
+          "type": "float",
+          "min": 0,
+          "max": 10,
+          "default": 0.5
+        }
+      ]
+    },
+    {
+      "id": "kd",
+      "name": "Kd（两路）",
+      "template": "kd {kd}",
+      "example": "kd 0",
+      "desc": "只改两路 Kd",
+      "args": [
+        {
+          "name": "kd",
+          "type": "float",
+          "min": 0,
+          "max": 5,
+          "default": 0.0
+        }
+      ]
+    },
+    {
+      "id": "speed",
+      "name": "直道基础速度",
+      "template": "spd {speed}",
+      "example": "spd 600",
+      "desc": "脉冲/20ms；实际弯道速度 = 该值 x 弯道比例",
+      "args": [
+        {
+          "name": "speed",
+          "type": "float",
+          "min": 0,
+          "max": 1000,
+          "default": 600
+        }
+      ]
+    },
+    {
+      "id": "steer",
+      "name": "转向参数",
+      "template": "dir {kp} {kp2} {kd}",
+      "example": "dir 1.6 0.035 0.45",
+      "desc": "方向环：线性 P / 非线性 P / 视觉 D；环岛内用 RING_STEER_* 不受影响",
+      "args": [
+        {
+          "name": "kp",
+          "type": "float",
+          "min": 0,
+          "max": 10,
+          "default": 1.6
+        },
+        {
+          "name": "kp2",
+          "type": "float",
+          "min": 0,
+          "max": 1,
+          "default": 0.035
+        },
+        {
+          "name": "kd",
+          "type": "float",
+          "min": 0,
+          "max": 5,
+          "default": 0.45
+        }
+      ]
+    },
+    {
+      "id": "curve",
+      "name": "弯道减速",
+      "template": "curve {min_ratio} {err_ref}",
+      "example": "curve 0.255 40",
+      "desc": "最低速度比例 / 减速参考偏差（GAIN 自动 = 1 - 比例）",
+      "args": [
+        {
+          "name": "min_ratio",
+          "type": "float",
+          "min": 0.05,
+          "max": 1.0,
+          "default": 0.255
+        },
+        {
+          "name": "err_ref",
+          "type": "float",
+          "min": 5,
+          "max": 200,
+          "default": 40
+        }
+      ]
+    },
+    {
+      "id": "diff",
+      "name": "电子差速增益",
+      "template": "diff {gain}",
+      "example": "diff 1.35",
+      "desc": "0 = 关掉差速；出弯甩尾就往下调",
+      "args": [
+        {
+          "name": "gain",
+          "type": "float",
+          "min": 0,
+          "max": 3,
+          "default": 1.35
+        }
+      ]
+    },
+    {
+      "id": "thr",
+      "name": "二值化阈值偏移",
+      "template": "thr {offset}",
+      "example": "thr 20",
+      "desc": "在最终阈值上叠加，-60 ~ +60；正数阈值更高",
+      "args": [
+        {
+          "name": "offset",
+          "type": "float",
+          "min": -60,
+          "max": 60,
+          "default": 0
+        }
+      ]
+    },
+    {
+      "id": "start",
+      "name": "起跑",
+      "template": "start",
+      "example": "start",
+      "desc": "退出 WAIT/LOST，进入循迹",
+      "args": []
+    },
+    {
+      "id": "stop",
+      "name": "停车",
+      "template": "stop",
+      "example": "stop",
+      "desc": "立即停车、舵机回中",
+      "args": []
+    }
+  ]
+}

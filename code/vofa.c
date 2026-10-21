@@ -3,7 +3,7 @@
 * 功能简介          VOFA+ 上位机串口通信：JustFloat 波形上传 + ASCII 在线调参
 *
 * *************************** 一帧数据长什么样 ***************************
-*   12 个 float（每个 4 字节，小端） + 4 字节帧尾 00 00 80 7F，共 52 字节。
+*   4 个 float（每个 4 字节，小端） + 4 字节帧尾 00 00 80 7F，共 20 字节。
 *   TriCore 是小端、float 是 IEEE754 单精度，所以直接把 float 数组 memcpy 进发送缓冲就行，
 *   不需要自己拆字节。
 *
@@ -103,6 +103,21 @@ static void vofa_exec (char *line)
     {
         motor_set_pid(2, a, b, c);
     }
+    else if((0 == strcmp(cmd, "kp")) && (n >= 2))       // 只改 Kp，Ki/Kd 和积分都不动
+    {
+        motor_set_pid_term(1, 0, a);
+        motor_set_pid_term(2, 0, a);
+    }
+    else if((0 == strcmp(cmd, "ki")) && (n >= 2))       // 只改 Ki
+    {
+        motor_set_pid_term(1, 1, a);
+        motor_set_pid_term(2, 1, a);
+    }
+    else if((0 == strcmp(cmd, "kd")) && (n >= 2))       // 只改 Kd
+    {
+        motor_set_pid_term(1, 2, a);
+        motor_set_pid_term(2, 2, a);
+    }
     else if((0 == strcmp(cmd, "spd")) && (n >= 2))
     {
         track_set_speed(a);
@@ -164,23 +179,15 @@ static void vofa_parse_rx (void)
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-// 函数简介      把当前状态填进 12 个通道
+// 函数简介      把当前状态填进 4 个通道
 // 备注信息      改通道顺序/数量时，这里和 vofa.h 的说明要一起改，并把 VOFA_CH_NUM 改对
 //-------------------------------------------------------------------------------------------------------------------
 static void vofa_fill (void)
 {
-    vofa_data[0]  = motor_get_target(1);                // T1
-    vofa_data[1]  = motor_get_speed(1);                 // A1
-    vofa_data[2]  = motor_get_target(2);                // T2
-    vofa_data[3]  = motor_get_speed(2);                 // A2
-    vofa_data[4]  = motor_get_duty(1) / 100.0f;         // D1 %
-    vofa_data[5]  = motor_get_duty(2) / 100.0f;         // D2 %
-    vofa_data[6]  = (float32)image_error;               // ERR
-    vofa_data[7]  = (float32)track_get_steer();         // SDR
-    vofa_data[8]  = track_get_curve_ratio() * 100.0f;   // RAT
-    vofa_data[9]  = track_get_speed();                  // SPD
-    vofa_data[10] = imu_get_yaw_deg();                  // YAW
-    vofa_data[11] = (float32)image_valid_row_count;     // VLD
+    vofa_data[0] = motor_get_speed(1);                  // A1
+    vofa_data[1] = motor_get_speed(2);                  // A2
+    vofa_data[2] = (float32)image_error;                // ERR
+    vofa_data[3] = imu_get_yaw_deg();                   // YAW
 }
 
 //==================================================== 对外接口 ====================================================
