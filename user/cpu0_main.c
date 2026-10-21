@@ -44,6 +44,7 @@
 #include "../code/servo.h"
 #include "../code/track.h"
 #include "../code/imu.h"
+#include "../code/vofa.h"                   // VOFA+ 波形 + 串口调参
 
 #pragma section all "cpu0_dsram"
 // 将本语句与#pragma section all restore语句之间的全局变量都放在CPU0的RAM中
@@ -93,6 +94,7 @@ int core0_main(void)
 
     // ------------------------------- 循迹控制 -------------------------------
     track_init();
+    vofa_init();                                // 串口 + 接收中断（放在 20ms 定时中断之前）
 
     // ------------------------------- 最后再开定时中断 -------------------------------
     // 20ms 一次，中断里同时做 编码器采样 + 两路速度环
@@ -103,6 +105,7 @@ int core0_main(void)
     while (TRUE)
     {
         uint32 now_ms = system_getval_ms();
+        vofa_update();                          // 解析上位机命令 + 50Hz 发一帧波形
 
         // 舵机中值标定：SERVO_SWEEP_ENABLE = 1 时这里会自动扫，= 0 时是空函数
         servo_sweep_update();

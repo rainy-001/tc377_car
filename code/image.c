@@ -45,6 +45,7 @@ static uint16 image_cross_row_count = 0;                // É¨ÃèÖĞÀÛ¼Æ£ºÁ½²à¶¼Éì³
 static uint16 image_white_row_count = 0;                // É¨ÃèÖĞÀÛ¼Æ£ºÕûĞĞÈ«°×
 static uint16 image_ring_row_l      = 0;                // É¨ÃèÖĞÀÛ¼Æ£ºÖ»ÓĞ×ó²à
 static uint16 image_ring_row_r      = 0;                // É¨ÃèÖĞÀÛ¼Æ£ºÖ»ÓĞÓÒ²à
+static int16 image_threshold_offset = IMAGE_THRESHOLD_OFFSET;   // ÔËĞĞÊ±¿É¸ÄµÄãĞÖµÆ«ÒÆ£¨VOFA+ µÄ thr ÃüÁî£©
 
 //==================================================== ×·Ïß²Î¿¼ ====================================================
 // ÖğĞĞÉ¨ÊÇ´Ó×îÏÂÃæÒ»ĞĞÍùÉÏÉ¨µÄ£¬ËùÒÔ"ÉÏÒ»ÓĞĞ§ĞĞ"¾ÍÊÇ»­ÃæÀï¸ü½üµÄÄÇÒ»ĞĞ¡£
@@ -732,7 +733,7 @@ void image_process (void)
     image_otsu_threshold = IMAGE_FIXED_THRESHOLD;
 #endif
 
-    th = (int16)image_otsu_threshold + IMAGE_THRESHOLD_OFFSET;
+    th = (int16)image_otsu_threshold + image_threshold_offset;
     if(th < IMAGE_THRESHOLD_MIN) { th = IMAGE_THRESHOLD_MIN; }
     if(th > IMAGE_THRESHOLD_MAX) { th = IMAGE_THRESHOLD_MAX; }
     image_threshold = (uint8)th;
@@ -855,4 +856,16 @@ void image_process (void)
     // ÅĞÉÏÖ®ºóËü»á¡¾¸ÄĞ´ image_center_line[] ²¢ÖØËã image_error¡¿¡ª¡ª
     // ·ÅÔÚ×îºó£¬ºóÃæ track.c / display.c ¿´µ½µÄ¾ÍÒÑ¾­ÊÇ»·µºÄ¿±êÏßÁË£¬ÄÇÁ½¸öÎÄ¼ş²»ÓÃ²ÙĞÄ¡£
     ring_update();
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+// º¯Êı¼ò½é      ÔÚÏß¸Ä¶şÖµ»¯ãĞÖµÆ«ÒÆ£¨VOFA+ µÄ thr ÃüÁî£©
+// ²ÎÊıËµÃ÷      offset          -60 ~ +60£¬ÕıÊıãĞÖµ¸ü¸ß£¨¸üÈİÒ×°Ñ±³¾°ÅĞºÚ£©
+//-------------------------------------------------------------------------------------------------------------------
+void image_set_threshold_offset (int16 offset)
+{
+    if(offset >  60) { offset =  60; }
+    if(offset < -60) { offset = -60; }
+
+    image_threshold_offset = offset;
 }

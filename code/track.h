@@ -161,4 +161,10 @@ uint8   track_get_state         (void);
 float32 track_get_left_target   (void);
 float32 track_get_right_target  (void);
 
+
+//==================================================== 在线调参（VOFA+ 用）============================================
+void    track_set_steer_param   (float32 kp, float32 kp2, float32 kd);
+void    track_set_curve_param   (float32 min_ratio, float32 err_ref);
+void    track_set_diff_gain     (float32 gain);
+
 #endif

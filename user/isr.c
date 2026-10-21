@@ -42,6 +42,7 @@
 #include "../code/motor.h"
 #include "../code/camera.h"
 #include "../code/imu.h"
+#include "../code/vofa.h"                       // VOFA+ 调参命令回调
 
 // 对于TC系列默认是不支持中断嵌套的，希望支持中断嵌套需要在中断内使用 interrupt_global_enable(0); 来开启中断嵌套
 // 简单点说实际上进入中断后TC系列的硬件自动调用了 interrupt_global_disable(); 来拒绝响应任何的中断，因此需要我们自己手动调用 interrupt_global_enable(0); 来开启中断的响应。
@@ -189,14 +190,11 @@ IFX_INTERRUPT(uart0_tx_isr, UART0_INT_VECTAB_NUM, UART0_TX_INT_PRIO)
 
 
 }
-//IFX_INTERRUPT(uart0_rx_isr, UART0_INT_VECTAB_NUM, UART0_RX_INT_PRIO)
-//{
-//    interrupt_global_enable(0);                     // 开启中断嵌套
-//
-//#if DEBUG_UART_USE_INTERRUPT                        // 如果开启 debug 串口中断
-//        debug_interrupr_handler();                  // 调用 debug 串口接收处理函数 数据会被 debug 环形缓冲区读取
-//#endif                                              // 如果修改了 DEBUG_UART_INDEX 那这段代码需要放到对应的串口中断去
-//}
+IFX_INTERRUPT(uart0_rx_isr, UART0_INT_VECTAB_NUM, UART0_RX_INT_PRIO)
+{
+    interrupt_global_enable(0);                     // 开启中断嵌套
+    vofa_uart_callback();                           // VOFA+ 调参命令：先塞进环形缓冲，主循环里解析
+}
 
 
 // 串口1默认连接到摄像头配置串口
