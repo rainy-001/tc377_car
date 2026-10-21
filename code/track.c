@@ -369,3 +369,56 @@ void track_set_diff_gain (float32 gain)
 
     track_diff_gain = gain;
 }
+
+//-------------------------------------------------------------------------------------------------------------------
+// 函数简介      逐项改转向参数（旋钮用）：只动一项，其余不变
+// 参数说明      term            0 = Kp，1 = Kp2，2 = Kd
+// 参数说明      value           新的值（内部限幅）
+//-------------------------------------------------------------------------------------------------------------------
+void track_set_steer_term (uint8 term, float32 value)
+{
+    switch(term)
+    {
+        case 0:
+            if(value < 0.0f) { value = 0.0f; }
+            if(value > 10.0f) { value = 10.0f; }
+            track_steer_kp = value;
+            break;
+        case 1:
+            if(value < 0.0f) { value = 0.0f; }
+            if(value > 1.0f) { value = 1.0f; }
+            track_steer_kp2 = value;
+            break;
+        case 2:
+            if(value < 0.0f) { value = 0.0f; }
+            if(value > 5.0f) { value = 5.0f; }
+            track_steer_kd = value;
+            break;
+        default:
+            break;
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+// 函数简介      逐项改弯道参数（旋钮用）：只动一项，其余不变
+// 参数说明      term            0 = 最低速度比例，1 = 减速参考偏差
+// 备注信息      改比例时 GAIN 自动按 1 - 比例 重算，和 track_set_curve_param 一致
+//-------------------------------------------------------------------------------------------------------------------
+void track_set_curve_term (uint8 term, float32 value)
+{
+    if(0 == term)
+    {
+        if(value < 0.05f) { value = 0.05f; }
+        if(value > 1.0f)  { value = 1.0f; }
+
+        track_curve_min  = value;
+        track_curve_gain = 1.0f - value;
+    }
+    else if(1 == term)
+    {
+        if(value < 5.0f)   { value = 5.0f; }
+        if(value > 200.0f) { value = 200.0f; }
+
+        track_curve_ref = value;
+    }
+}

@@ -167,4 +167,8 @@ void    track_set_steer_param   (float32 kp, float32 kp2, float32 kd);
 void    track_set_curve_param   (float32 min_ratio, float32 err_ref);
 void    track_set_diff_gain     (float32 gain);
 
+// 逐项调参（旋钮用）：steer term 0=Kp 1=Kp2 2=Kd；curve term 0=最低速度比例 1=参考偏差
+void    track_set_steer_term    (uint8 term, float32 value);
+void    track_set_curve_term    (uint8 term, float32 value);
+
 #endif

@@ -118,6 +118,26 @@ static void vofa_exec (char *line)
         motor_set_pid_term(1, 2, a);
         motor_set_pid_term(2, 2, a);
     }
+    else if((0 == strcmp(cmd, "skp")) && (n >= 2))      // 只改转向 Kp
+    {
+        track_set_steer_term(0, a);
+    }
+    else if((0 == strcmp(cmd, "skp2")) && (n >= 2))     // 只改转向 Kp2
+    {
+        track_set_steer_term(1, a);
+    }
+    else if((0 == strcmp(cmd, "skd")) && (n >= 2))      // 只改转向 Kd
+    {
+        track_set_steer_term(2, a);
+    }
+    else if((0 == strcmp(cmd, "cmr")) && (n >= 2))      // 只改弯道最低速度比例
+    {
+        track_set_curve_term(0, a);
+    }
+    else if((0 == strcmp(cmd, "cer")) && (n >= 2))      // 只改弯道减速参考偏差
+    {
+        track_set_curve_term(1, a);
+    }
     else if((0 == strcmp(cmd, "spd")) && (n >= 2))
     {
         track_set_speed(a);
