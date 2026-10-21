@@ -427,7 +427,10 @@ k = 1.35 × 轮距 / (2 × 轴距) × tan(|前轮角|)     # 上限 0.66
 
 ### 10.3 编码
 
-- 所有 `.c/.h` 为 **GBK（CP936）**。用 VS Code 需手动选 `GBK` 编码，或先统一转 UTF-8 再提交。
+- `code/`、`user/`、`libraries/` 下的 `.c/.h` 全部是 **GBK（CP936）**，和逐飞原库一致；编译器不看注释编码，不需要转 UTF-8。
+- 工程里放了 `.vscode/settings.json`：VS Code 会把 C/C++ 文件按 **GBK** 打开，Markdown / Python / JSON 仍按 UTF-8，不用再手动 “Reopen with Encoding”。
+- 如果 VS Code 里还是乱码：右下角编码 → `Reopen with Encoding` → `GBK`，然后 `Developer: Reload Window`。
+- ADS 的工程编码在 `.settings/org.eclipse.core.resources.prefs` 里已经是 `GBK`，不要用 UTF-8 另存 `.c/.h`，否则 ADS 里会反过来乱码。
 
 ### 10.4 其它
 
