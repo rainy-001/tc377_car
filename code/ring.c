@@ -20,12 +20,14 @@ int16   ring_wide        = 0;                           // 第 83 行路宽
 uint8   ring_corner_ok   = 0;                           // 本帧找到拐点了吗
 
 //==================================================== 内部变量 ====================================================
+#if (RING_ENABLE)                                          // 关闭环岛时这几个只在状态机里用，包起来免得报 unused
 static uint16  ring_watch    = 0;                       // 整个绕环过程的兜底计时（超过 RING_WATCHDOG_FRAMES 强制复位）
 static uint16  ring_cooldown   = 0;                     // 出环冷却计数（E07 的 timer_L）
 static uint16  ring_exit_cnt   = 0;                     // 7 阶段计时兜底（E07 的 youchuhuandejishu）
 static float32 ring_ang_ref    = 0.0f;                  // 5->6 时记下的航向（E07 的 cir_ang）
 static int16   ring_corner_col = 0;                     // 本帧拐点列
 static int16   ring_corner_row = 0;                     // 本帧拐点行
+#endif
 
 // E07 里 3->4 用的是 up_piont_x > 20（它图高 60），换算过来就是"拐点行号 > 本工程第 41 行"
 #define RING_ROW_IN             RING_ROW(20)
